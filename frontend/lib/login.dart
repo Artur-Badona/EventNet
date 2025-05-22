@@ -1,6 +1,5 @@
-// LoginPage.dart
 import 'package:flutter/material.dart';
-import 'home.dart'; // Importa a HomePage
+import 'home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,17 +13,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState?.validate() ?? false) {
-      // Aqui você pode adicionar a lógica para autenticação real
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Login bem-sucedido!')));
 
-      // Redireciona para a HomePage após o login bem-sucedido
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ), // Navega para a HomePage
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
   }
@@ -33,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(6, 32, 43, 1),
-      appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -42,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Campo de email
                 SizedBox(
                   width: 300,
                   child: TextFormField(
@@ -52,7 +45,9 @@ class _LoginPageState extends State<LoginPage> {
                       filled: true,
                       labelText: 'Email',
                       hintText: 'Digite seu email',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -67,8 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 30),
-                // Campo de senha
+                SizedBox(height: 50),
                 SizedBox(
                   width: 300,
                   child: TextFormField(
@@ -79,7 +73,9 @@ class _LoginPageState extends State<LoginPage> {
                       filled: true,
                       labelText: 'Senha',
                       hintText: 'Digite sua senha',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -93,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                // Botão de login
                 ElevatedButton(
                   onPressed: _login,
                   child: Text('Entrar'),
@@ -102,6 +97,8 @@ class _LoginPageState extends State<LoginPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    backgroundColor: const Color.fromRGBO(245, 238, 221, 1),
+                    foregroundColor: Colors.black,
                   ),
                 ),
               ],
