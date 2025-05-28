@@ -1,7 +1,8 @@
 // main.dart
 import 'package:event_net/home.dart';
+import 'package:event_net/profile.dart';
 import 'package:flutter/material.dart';
-import 'login.dart'; // Importa a LoginPage
+import 'login.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,6 +11,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: HomePage());
+    return MaterialApp(home: ProfilePage(), debugShowCheckedModeBanner: false);
   }
 }

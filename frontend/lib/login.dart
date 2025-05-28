@@ -91,14 +91,14 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _login,
-                  child: Text('Entrar'),
+                  child: Text("Entrar"),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    backgroundColor: const Color.fromRGBO(245, 238, 221, 1),
-                    foregroundColor: Colors.black,
+                    backgroundColor: const Color.fromRGBO(7, 122, 125, 1),
+                    foregroundColor: Colors.white,
                   ),
                 ),
               ],
