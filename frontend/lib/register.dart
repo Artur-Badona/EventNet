@@ -1,83 +1,62 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
-import 'register.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
- void _login() async {
+  void _register() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final email = _emailController.text;
-      final password = _passwordController.text;
-
-      final url = Uri.parse('http://10.0.2.2:8000/login');
+      final url = Uri.parse('http://10.0.2.2:8000/registrar');
+      final headers = {
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+      };
+      final body = jsonEncode({
+        'nome': _nameController.text,
+        'email': _emailController.text,
+        'senha': _passwordController.text,
+      });
 
       try {
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'accept': 'application/json',
-          },
-          body: {
-            'grant_type': '',
-            'username': email,
-            'password': password,
-            'scope': '',
-            'client_id': '',
-            'client_secret': '',
-          },
-        );
+        final response = await http.post(url, headers: headers, body: body);
 
-        if (response.statusCode == 200) {
-          final data = jsonDecode(utf8.decode(response.bodyBytes));
-          final token = data['access_token'];
-
-          if (token != null) {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('jwt_token', token);
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Login bem-sucedido!')),
-            );
-
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Token não recebido')),
-            );
-          }
-        } else {
+        if (response.statusCode == 200 || response.statusCode == 201) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Falha no login: ${response.statusCode}')),
+            SnackBar(content: Text('Registro bem-sucedido!')),
+          );
+          Navigator.pop(context); // volta pra tela de login
+        } else {
+          final error = jsonDecode(utf8.decode(response.bodyBytes));  
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao registrar: ${error['detail'] ?? response.body}')),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao conectar: $e')),
+          SnackBar(content: Text('Erro de conexão: $e')),
         );
       }
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(6, 32, 43, 1),
+      appBar: AppBar(
+        title: Text('Registrar'),
+        backgroundColor: const Color.fromRGBO(7, 122, 125, 1),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -89,10 +68,32 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: 300,
                   child: TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color.fromRGBO(245, 238, 221, 1),
+                      labelText: 'Nome',
+                      hintText: 'Digite seu nome',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, insira seu nome';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 300,
+                  child: TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      fillColor: const Color.fromRGBO(245, 238, 221, 1),
                       filled: true,
+                      fillColor: const Color.fromRGBO(245, 238, 221, 1),
                       labelText: 'Email',
                       hintText: 'Digite seu email',
                       border: OutlineInputBorder(
@@ -112,17 +113,17 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 300,
                   child: TextFormField(
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      fillColor: const Color.fromRGBO(245, 238, 221, 1),
                       filled: true,
+                      fillColor: const Color.fromRGBO(245, 238, 221, 1),
                       labelText: 'Senha',
-                      hintText: 'Digite sua senha',
+                      hintText: 'Crie uma senha',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
@@ -138,10 +139,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _login,
-                  child: Text("Entrar"),
+                  onPressed: _register,
+                  child: Text("Registrar"),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
@@ -151,17 +152,6 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
                 ),
-                SizedBox(height: 8),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
-                  },
-                  child: Text(
-                    "Ainda não tem uma conta? Registre-se",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-
               ],
             ),
           ),
