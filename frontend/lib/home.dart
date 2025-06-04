@@ -196,6 +196,8 @@ class _HomePageState extends State<HomePage> {
                               descricao: evento.descricao,
                               imagem_url: evento.imagem,
                               localizacao: evento.localizacao,
+                              dataEvento: evento.dataEvento,
+                              dataFimInscricao: evento.dataFimInscricao,
                             ),
                             SizedBox(height: 20),
                           ],
@@ -233,6 +235,7 @@ class Evento {
   final String localizacao;
   final int idCategoria;
   final DateTime dataEvento;
+  final DateTime dataFimInscricao;
 
   Evento({
     required this.id,
@@ -242,6 +245,7 @@ class Evento {
     required this.localizacao,
     required this.idCategoria,
     required this.dataEvento,
+    required this.dataFimInscricao,
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) {
@@ -253,6 +257,7 @@ class Evento {
       localizacao: json['localizacao'],
       idCategoria: json['id_categoria'],
       dataEvento: DateTime.parse(json['data_evento']),
+      dataFimInscricao: DateTime.parse(json['data_fim_inscricao']),
     );
   }
 }

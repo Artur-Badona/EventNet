@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart'; 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
 class EventPost extends StatelessWidget {
   final int id;
   final String titulo;
   final String descricao;
   final String imagem_url;
   final String localizacao;
+  final DateTime dataEvento;
+  final DateTime dataFimInscricao;
 
   EventPost({
     super.key,
@@ -17,10 +19,16 @@ class EventPost extends StatelessWidget {
     required this.descricao,
     required this.imagem_url,
     required this.localizacao,
+    required this.dataEvento,
+    required this.dataFimInscricao,
   });
 
   @override
   Widget build(BuildContext context) {
+    final dateFormat = DateFormat('dd/MM/yyyy HH:mm'); // formatação com hora
+    final dataEventoFormatada = dateFormat.format(dataEvento);
+    final dataFimInscricaoFormatada = dateFormat.format(dataFimInscricao);
+
     return Center(
       child: Container(
         padding: EdgeInsets.all(10.0),
@@ -41,7 +49,31 @@ class EventPost extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 4),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    "Data do Evento: $dataEventoFormatada",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    "Inscrições até: $dataFimInscricaoFormatada",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.redAccent,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
             Row(
               children: [
                 Icon(Icons.location_on, color: Colors.black54, size: 20),
@@ -132,6 +164,7 @@ class EventPost extends StatelessWidget {
                       SnackBar(content: Text('Erro de conexão: $e')),
                     );
                   }
+                
                 },
                 child: Text("Entrar"),
                 style: ElevatedButton.styleFrom(
